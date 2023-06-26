@@ -1,83 +1,67 @@
 #include "sort.h"
 
 /**
- *quick_sort - prepare the terrain to quicksort algorithm
- *@array: array
- *@size: array size
+ * partition - find position of pivot element in array
+ * @array: array to be sorted
+ * @low: lower boundary of array
+ * @hi: upper bound of array
+ * @size: size of the array
+ *
+ * Return: position of pivot
+ */
+int partition(int *array, int low, int hi, size_t size)
+{
+	int pivot = array[hi], temp, i = low - 1, j;
+
+	for (j = low; j <= hi; j++)
+	{
+		if (array[j] <= pivot)
+		{
+			i++;
+			if (i != j)
+			{
+				temp = array[j];
+				array[j] = array[i];
+				array[i] = temp;
+				print_array(array, size);
+			}
+		}
+	}
+	return (i);
+}
+
+/**
+ * q_sort - sort a certain range of an array of integers
+ * @array: array to be sorted
+ * @low: lower boundary of range to be sorted
+ * @hi: upper boundary of range to be sorted
+ * @size: size of whole array
+ *
+ * Return: no return value (void)
+ */
+void q_sort(int *array, int low, int hi, size_t size)
+{
+	int part = 0;
+
+	if (low < hi)
+	{
+		part = partition(array, low, hi, size);
+		q_sort(array, low, part - 1, size);
+		q_sort(array, part + 1, hi, size);
+	}
+}
+
+/**
+ * quick_sort - sort an array of integers in ascending order
+ * @array: pointer to first element of array to be sorted
+ * @size: size of the array
+ *
+ * Return: no return value (void)
  */
 void quick_sort(int *array, size_t size)
 {
-	if (!array || size < 2)
+	if (size < 2)
 		return;
-	qs(array, 0, size - 1, size);
-}
 
-/**
-*swap - the positions of two elements into an array
-*@array: array
-* @m: int
-* @n: int
-* Return: (void) Swaped int
-*/
-void swap(int *array, ssize_t m, ssize_t n)
-{
-	int tmp;
-
-	tmp = array[m];
-	array[m] = array[n];
-	array[n] = tmp;
-}
-
-/**
- *qs - qucksort algorithm implementation
- *@array: array
- *@first: first array element
- *@last: last array element
- *@size: array size
- */
-void qs(int *array, ssize_t first, ssize_t last, int size)
-{
-	ssize_t position = 0;
-
-
-	if (first < last)
-	{
-		position = lomuto_partition(array, first, last, size);
-
-		qs(array, first, position - 1, size);
-		qs(array, position + 1, last, size);
-	}
-}
-
-/**
- *lomuto_partition - lomuto partition sorting scheme implementation
- *@array: array
- *@first: first array element
- *@last: last array element
- *@size: size array
- *Return: return the position of the last element sorted
- */
-int lomuto_partition(int *array, ssize_t first, ssize_t last, size_t size)
-{
-	int pivot = array[last];
-	ssize_t current = first, finder;
-
-	for (finder = first; finder < last; finder++)
-	{
-		if (array[finder] < pivot)
-		{
-			if (array[current] != array[finder])
-			{
-				swap(array, current, finder);
-				print_array(array, size);
-			}
-			current++;
-		}
-	}
-	if (array[current] != array[last])
-	{
-		swap(array, current, last);
-		print_array(array, size);
-	}
-	return (current);
+	q_sort(array, 0, size - 1, size);
 }
