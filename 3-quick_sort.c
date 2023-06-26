@@ -1,71 +1,83 @@
 #include "sort.h"
 
 /**
-*swap - the positions of two elements into an array
-*
-*@a: first element to be swapped
-*@b: second element to be swapped
-*/
-void swap(int *a, int *b)
-{
-	int temp = *a;
-	*a = *b;
-	*b = temp;
-}
-
-/**
- *partition - partition sorting scheme implementation
- *@array: array
- *@high: high array element
- *@low: low array element
- *
- *Return: return the position of the last element sorted
- */
-int partition(int *array, int low, int high)
-{
-	int pivot = array[high];
-	int i = low - 1;
-
-	for (int j = low; j <= high - 1; j++)
-	{
-		if (array[j] <= pivot)
-		{
-			i++;
-			swap(&array[i], &array[j]);
-		}
-	}
-	swap(&array[i + 1], &array[high]);
-	return (i + 1);
-}
-
-/**
- *quick_sort_recursive - qucksort algorithm implementation
- *@array: array
- *@high: high array element
- *@low: low array element
- *
- */
-void quick_sort_recursive(int *array, int low, int high)
-{
-	if (low < high)
-	{
-		int pi = partition(array, low, high);
-
-		quick_sort_recursive(array, low, pi - 1);
-		quick_sort_recursive(array, pi + 1, high);
-	}
-}
-
-/**
  *quick_sort - prepare the terrain to quicksort algorithm
  *@array: array
  *@size: array size
  */
 void quick_sort(int *array, size_t size)
 {
-	if (array == NULL || size < 2)
+	if (!array || size < 2)
 		return;
-
-	quick_sort_recursive(array, 0, size - 1);
+	qs(array, 0, size - 1, size);
 }
 
+/**
+*swap - the positions of two elements into an array
+*@array: array
+* @m: int
+* @n: int
+* Return: (void) Swaped int
+*/
+void swap(int *array, ssize_t m, ssize_t n)
+{
+	int tmp;
+
+	tmp = array[m];
+	array[m] = array[n];
+	array[n] = tmp;
+}
+
+/**
+ *qs - qucksort algorithm implementation
+ *@array: array
+ *@first: first array element
+ *@last: last array element
+ *@size: array size
+ */
+void qs(int *array, ssize_t first, ssize_t last, int size)
+{
+	ssize_t position = 0;
+
+
+	if (first < last)
+	{
+		position = lomuto_partition(array, first, last, size);
+
+		qs(array, first, position - 1, size);
+		qs(array, position + 1, last, size);
+	}
+}
+
+/**
+ *lomuto_partition - lomuto partition sorting scheme implementation
+ *@array: array
+ *@first: first array element
+ *@last: last array element
+ *@size: size array
+ *Return: return the position of the last element sorted
+ */
+int lomuto_partition(int *array, ssize_t first, ssize_t last, size_t size)
+{
+	int pivot = array[last];
+	ssize_t current = first, finder;
+
+	for (finder = first; finder < last; finder++)
+	{
+		if (array[finder] < pivot)
+		{
+			if (array[current] != array[finder])
+			{
+				swap(array, current, finder);
+				print_array(array, size);
+			}
+			current++;
+		}
+	}
+	if (array[current] != array[last])
+	{
+		swap(array, current, last);
+		print_array(array, size);
+	}
+	return (current);
+}
